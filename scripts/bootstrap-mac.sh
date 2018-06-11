@@ -3,14 +3,15 @@
 ## preflight checks
 [ $(dirname "${0}") != "." ] && { echo "please run from within scripts dir, exiting..." ; exit 1; }
 [ ! -r mas-pkgs.txt ] && cp -pv mas-pkgs.txt.example mas-pkgs.txt && edit_pkg_lists="true"
-[ ! -r brew-pkgs.txt ] && cp -pv brew-pkgs.txt.example brew-pkgs.txt && edit_pkg_lists="true"
+# [ ! -r brew-pkgs.txt ] && cp -pv brew-pkgs.txt.example brew-pkgs.txt && edit_pkg_lists="true"
 [ ! -r cask-pkgs.txt ] && cp -pv cask-pkgs.txt.example cask-pkgs.txt && edit_pkg_lists="true"
 [ "${edit_pkg_lists}" = "true" ] && { echo "*-pkgs.txt files created, please edit and re-run this script, exiting..." ; exit 1; }
-[ ! -r mas-pkgs.txt ] || [ ! -r brew-pkgs.txt ] || [ ! -r cask-pkgs.txt ] && { echo "missing package lists, exiting..." ; exit 1; }
+# [ ! -r mas-pkgs.txt ] || [ ! -r brew-pkgs.txt ] || [ ! -r cask-pkgs.txt ] && { echo "missing package lists, exiting..." ; exit 1; }
+[ ! -r mas-pkgs.txt ] || [ ! -r cask-pkgs.txt ] && { echo "missing package lists, exiting..." ; exit 1; }
 
 ## read in packages to install
 mas_pkgs="$(grep '^[^#[:blank:]]' mas-pkgs.txt | tr '\n' ' ')"
-brew_pkgs="$(grep '^[^#[:blank:]]' brew-pkgs.txt | tr '\n' ' ')"
+# brew_pkgs="$(grep '^[^#[:blank:]]' brew-pkgs.txt | tr '\n' ' ')"
 cask_pkgs="$(grep '^[^#[:blank:]]' cask-pkgs.txt | tr '\n' ' ')"
 
 ## do it!
@@ -24,21 +25,32 @@ xcode-select --install
 brew install mas
 brew tap caskroom/cask
 brew tap buo/cask-upgrade
+sudo mkdir /opt/mports
+sudo chown -R chadhs:admin mports
+cd mports
+git clone https://github.com/macports/macports-base.git
+cd macports-base
+./configure --enable-readline
+make
+sudo make install
+make distclean
+sudo port selfupdate
 
 echo "installing mac app store apps..."
 read -rp "enter your appleid email address: " appleid
 mas signin "${appleid}"
 mas install $(echo "${mas_pkgs}") # wrapping echo is for array->string conversion
 
-echo "installing open-source tools..."
-brew install $(echo "${brew_pkgs}") # wrapping echo is for array->string conversion
+# echo "installing open-source tools..."
+# brew install $(echo "${brew_pkgs}") # wrapping echo is for array->string conversion
+echo "install from macports manually!"
 
 echo "installing non mac app store apps..."
 brew cask install $(echo "${cask_pkgs}") # wrapping echo is for array->string conversion
 
 echo "seting up dotfiles..."
 cd ~ || exit 1
-pip install virtualenvwrapper
+# pip install virtualenvwrapper
 [ ! -d ~/dotfiles ] && git clone https://github.com/chadhs/dotfiles.git
 sh dotfiles/deploy.sh
 

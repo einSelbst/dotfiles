@@ -1,0 +1,48 @@
+# macports install list
+
+## include an uncommented list of macports to install
+
+aspell
+bash
+editorconfig-core-c
+kubectl
+mysql56
+mysql56-server
+nmap
+nodejs8
+npm5
+pandoc
+postgresql96
+postgresql96-server
+pwgen
+python27
+py27-pip
+py27-awscli
+py27-ansible
+ansible-lint
+py27-boto
+py27-jmespath
+py27-mysql
+py27-netaddr
+py27-virtualenvwrapper
+readline
+rlwrap
+ruby25
+speedtest-cli
+ssh-copy-id
+shellcheck
+terraform
+the_silver_searcher
+tmux
+tree
+wget
+
+
+## not available
+### need
+#heroku - installer from website
+#leiningen 2.8+ - installer script from website
+### not using with mojave
+#chruby
+#ruby-install
+#nvm
